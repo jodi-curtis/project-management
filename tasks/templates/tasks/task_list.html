@@ -1,0 +1,42 @@
+{% extends "projects/base.html" %}
+{% block content %}
+    <h1>My Tasks</h1>
+    {% for task in incomplete_tasks %}
+
+        <h2>{{ task.name }}</h2>
+        <form method="post" action="{% url 'task-home' %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="task_id" value="{{ task.id }}">
+            <input 
+                type="checkbox" 
+                name="complete" 
+                {% if task.complete %} checked {% endif %}
+                onchange="this.form.submit();">
+        </form>
+        <p>{{ task.due_date|date:'dS M Y' }}</p>
+        <a href="{% url 'project-detail' task.project.id %}">
+            <span>From '{{ task.project.name }}'</span>
+        </a>
+
+    {% endfor %}
+
+    <h2>Completed Tasks</h2>
+    {% for task in completed_tasks %}
+
+    <h2>{{ task.name }}</h2>
+    <form method="post" action="{% url 'task-home' %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="task_id" value="{{ task.id }}">
+        <input 
+            type="checkbox" 
+            name="complete" 
+            {% if task.complete %} checked {% endif %}
+            onchange="this.form.submit();">
+    </form>
+    <p>{{ task.due_date|date:'dS M Y' }}</p>
+    <a href="{% url 'project-detail' task.project.id %}">
+        <span>From '{{ task.project.name }}'</span>
+    </a>
+
+{% endfor %}
+{% endblock content %}
