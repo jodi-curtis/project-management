@@ -1,42 +1,48 @@
 {% extends "projects/base.html" %}
 {% block content %}
-    <h1>My Tasks</h1>
-    {% for task in incomplete_tasks %}
+    <div class="container py-5">
+        <h2 class="my-4">To-do</h2>
+        <div class="list-group"> 
+            {% if incomplete_tasks %}
+                {% for task in incomplete_tasks %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h4 class="mb-1">{{ task.name }}</h4>
+                            <p class="mb-0"><small>{{ task.due_date|date:'dS M Y' }}</small></p>
+                            <p class="mb-0"><small>From: <a href="{% url 'project-detail' task.project.id %}">{{ task.project.name }}</a></small></p>
+                        </div>
+                        <form method="post" action="{% url 'task-home' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                            <input type="checkbox" name="complete" {% if task.complete %} checked {% endif %} onchange="this.form.submit();"  class="form-check-input">
+                        </form>
+                    </div>    
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No tasks in your todo list!</p>
+            {% endif %}
 
-        <h2>{{ task.name }}</h2>
-        <form method="post" action="{% url 'task-home' %}" style="display: inline;">
-            {% csrf_token %}
-            <input type="hidden" name="task_id" value="{{ task.id }}">
-            <input 
-                type="checkbox" 
-                name="complete" 
-                {% if task.complete %} checked {% endif %}
-                onchange="this.form.submit();">
-        </form>
-        <p>{{ task.due_date|date:'dS M Y' }}</p>
-        <a href="{% url 'project-detail' task.project.id %}">
-            <span>From '{{ task.project.name }}'</span>
-        </a>
+        <h2 class="my-4 text-success">Completed Tasks</h2>
+        <div class="list-group"> 
+            {% if completed_tasks %}
+                {% for task in completed_tasks %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h4 class="text-decoration-line-through mb-1">{{ task.name }}</h4>
+                            <p class="text-muted mb-0"><small>{{ task.due_date|date:'dS M Y' }}</small></p>
+                            <p class="mb-0"><small>From: <a href="{% url 'project-detail' task.project.id %}">{{ task.project.name }}</a></small></p>
+                        </div>
 
-    {% endfor %}
-
-    <h2>Completed Tasks</h2>
-    {% for task in completed_tasks %}
-
-    <h2>{{ task.name }}</h2>
-    <form method="post" action="{% url 'task-home' %}" style="display: inline;">
-        {% csrf_token %}
-        <input type="hidden" name="task_id" value="{{ task.id }}">
-        <input 
-            type="checkbox" 
-            name="complete" 
-            {% if task.complete %} checked {% endif %}
-            onchange="this.form.submit();">
-    </form>
-    <p>{{ task.due_date|date:'dS M Y' }}</p>
-    <a href="{% url 'project-detail' task.project.id %}">
-        <span>From '{{ task.project.name }}'</span>
-    </a>
-
-{% endfor %}
+                        <form method="post" action="{% url 'task-home' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                            <input type="checkbox" name="complete" {% if task.complete %} checked {% endif %} onchange="this.form.submit();" class="form-check-input">
+                        </form>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No completed tasks!</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock content %}

@@ -9,12 +9,13 @@ from projects.models import Project
 class TaskListView(ListView):
     model = Task
     context_object_name = 'tasks'
+    ordering = ['due_date']
 
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['completed_tasks'] = Task.objects.filter(complete=True)
-        context['incomplete_tasks'] = Task.objects.filter(complete=False)
+        context['completed_tasks'] = Task.objects.filter(complete=True).order_by('due_date')
+        context['incomplete_tasks'] = Task.objects.filter(complete=False).order_by('due_date')
         return context
 
     def post(self, request, *args, **kwargs):

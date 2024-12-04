@@ -1,16 +1,19 @@
 {% extends "projects/base.html" %}
 {% block content %}
-    <div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Delete Project</legend>
-                <h2>Are you sure you want to delete the project "{{ object.name}}"</h2>
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-danger" type="submit">Yes, Delete</button>
-                <a class="btn btn-outline-sec" href="{% url 'project-detail' object.id %}">Cancel</a>
-            </div>
-        </form>
+    <div class="container py-5">
+        <div class="content-section bg-light text-dark rounded-3 border border-2 p-4 shadow">
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4 pb-2 text-danger">Delete Project</legend>
+                    <h2 class="mb-3">Are you sure you want to delete the project "<strong>{{ object.name}}</strong>"?</h2>
+                    <p class="text-muted">The project and any related tasks and messages will be permanently deleted immediately.</p>
+                </fieldset>
+                <div class="form-group d-flex justify-content-between mt-4">
+                    <button class="btn btn-danger px-4 py-2" type="submit">Yes, Delete</button>
+                    <a class="btn btn-secondary px-4 py-2" href="{% url 'project-detail' object.id %}">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock content %}
