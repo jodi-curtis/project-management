@@ -1,16 +1,30 @@
 {% extends "projects/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Project</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Post</button>
-            </div>
-        </form>
+    <div class="container">
+        <div class="content-section bg-light text-dark rounded-3 border border-2 my-4 p-4 shadow">
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="mb-4 text-center">
+                        {% if form.instance.pk %}
+                            Edit Project
+                        {% else %}
+                            New Project
+                        {% endif %}
+                    </legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="text-center">
+                    <button class="btn btn-primary" type="submit">
+                        {% if form.instance.pk %}
+                            Update Project
+                        {% else %}
+                            Create Project
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock content %}

@@ -34,6 +34,11 @@ class TaskCreateView(CreateView):
         form.instance.project = project
         return super().form_valid(form)
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = get_object_or_404(Project, pk=self.kwargs['project_id'])
+        return kwargs
+    
     def get_success_url(self):
         return reverse_lazy('project-detail', kwargs={'pk': self.object.project.pk})
 
@@ -41,6 +46,11 @@ class TaskCreateView(CreateView):
 class TaskUpdateView(UpdateView):
     model = Task
     form_class = TaskForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = self.object.project
+        return kwargs
 
     def get_success_url(self):
         return reverse_lazy('project-detail', kwargs={'pk': self.object.project.pk})

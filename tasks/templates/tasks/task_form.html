@@ -1,11 +1,30 @@
 {% extends "projects/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-
-    <h1>Edit Task: {{ task.name }}</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-
+<div class="container">
+    <div class="content-section bg-light text-dark rounded-3 border border-2 my-4 p-4 shadow">
+        <form method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="mb-4 text-center">
+                    {% if form.instance.pk %}
+                        Edit Task: {{ task.name }}
+                    {% else %}
+                        New Task
+                    {% endif %}                    
+                </legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">
+                    {% if form.instance.pk %}
+                        Update Task
+                    {% else %}
+                        Create Task
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock content %}

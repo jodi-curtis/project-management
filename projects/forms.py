@@ -9,6 +9,9 @@ class ProjectForm(forms.ModelForm):
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
+        help_texts = {
+            'team_members': 'Hold Ctrl (Cmd on macOS) to select multiple team members.',
+        }
 
     def clean(self):
         cleaned_data = super().clean()
