@@ -1,71 +1,123 @@
 {% extends "projects/base.html" %}
 {% block content %}
-    <h1>{{ project.name }}</h1>
-    <p>{{ project.description }}</p>
-    <h3>Created by:</h3>
-    <p>{{ project.created_by.username }}</p>
-    <h3>Team Members:</h3>
-    <ul>
-        {% for member in project.team_members.all %}
-            <li>{{ member.username }}</li>
-        {% endfor %}
-    </ul>
-    <p>{{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}</p>
+    <div class="container">
+        <div class="row bg-dark text-light rounded my-5 py-4">
+            <div class="col-12 col-md-9">
+                <h2>{{ project.name }}</h1>
+            </div>
 
-    {% if project.created_by == user %}
-      <div>
-        <a class="btn" href="{% url 'project-update' project.id %}">Edit project details</a>
-        <a class="btn" href="{% url 'project-delete' project.id %}">Delete project</a>
-      </div>
-    {% endif %}
+            <div class="col-12 col-md-3 text-start text-md-end">
+                {% if project.created_by == user %}
+                    <a class="btn btn-sm btn-success" href="{% url 'project-update' project.id %}">Edit</a>
+                    <a class="btn btn-sm btn-danger" href="{% url 'project-delete' project.id %}">Delete</a>
+                {% endif %}
+            </div>
 
-    <h2>Tasks</h2>
-    {% if tasks %}
-        <ul>
-            {% for task in tasks %}
-                <li>
-                    <strong>{{ task.name }}</strong> - 
-                    Assigned to: 
-                    {% if task.assigned_to %}
-                      {{ task.assigned_to.username }}
+            <div class="col-12 col-md-6">
+                <span class="badge rounded-pill bg-warning text-dark">Created by: {{ project.created_by.username }}</span>
+            </div>
+
+            <div class="col-12 col-md-6 text-start text-md-end">
+                <span class="badge rounded-pill bg-primary">{{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}</span>
+            </div>
+
+            <div class="col-12 col-md-9 mt-4">
+                <p class="me-4">{{ project.description }}</p>
+            </div>
+
+            <div class="col-12 col-md-3 mt-4">
+                {% if project.team_members.exists %}
+                    <h5>Team Members:</h5>
+                    <ul>
+                        {% for member in project.team_members.all %}
+                            <li>{{ member.username }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="row bg-light text-dark border border-secondary border-3 rounded my-5 py-4">
+            <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                <h2>Tasks</h2>
+                <a class="btn btn-primary rounded-circle" href="{% url 'task-create' project.id %}"><i class="fas fa-plus"></i></a>
+            </div>
+
+            <div class="col-12">
+                {% if tasks %}
+                    <ul class="list-group">
+                        {% for task in tasks %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="{% if task.complete %}text-decoration-line-through text-muted{% endif %}">
+                                        <strong>{{ task.name }}</strong>
+                                        <small>
+                                            {% if task.assigned_to %}
+                                                ({{ task.assigned_to.username }})
+                                            {% else %}
+                                                (Unassigned)
+                                            {% endif %}
+                                            | Due: {{ task.due_date }}
+                                        </small>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex align-items-center">
+                                    <form method="post" action="{% url 'project-detail' object.pk %}" class="me-2">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="task_id" value="{{ task.id }}">
+                                        <input 
+                                            type="checkbox" 
+                                            name="complete" 
+                                            {% if task.complete %} checked {% endif %}
+                                            onchange="this.form.submit();">
+                                    </form>
+                                    <a class="btn btn-sm btn-success" href="{% url 'task-edit' task.id %}">Edit</a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No tasks assigned to this project.</p>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="row bg-light text-dark border border-primary border-3 rounded my-5 py-4">
+            <div class="col-12 mb-3">
+                <h2 class="text-primary">Project Chat</h2>
+            </div>
+
+            <div class="col-12 mb-4">
+                <ul class="list-group">
+                    {% if chat_messages.exists %}
+                        {% for message in chat_messages %}
+                            <li class="list-group-item">
+                                <strong class="text-primary">{{ message.user.username }}</strong>: 
+                                <span>{{ message.message }}</span>
+                                <small class="text-muted float-end">{{ message.display_timestamp }}</small>
+                            </li>
+                        {% endfor %}
                     {% else %}
-                      Unassigned
+                        <li class="list-group-item text-muted">No messages yet.</li>
                     {% endif %}
-                    | Due: {{ task.due_date }} 
-                    {% if task.complete %}
-                      Complete
-                    {% else %}
-                    | Incomplete
-                    {% endif %}
-                    <form method="post" action="{% url 'project-detail' object.pk %}" style="display: inline;">
-                      {% csrf_token %}
-                      <input type="hidden" name="task_id" value="{{ task.id }}">
-                      <input 
-                          type="checkbox" 
-                          name="complete" 
-                          {% if task.complete %} checked {% endif %}
-                          onchange="this.form.submit();">
-                    </form>
-                    <a href="{% url 'task-edit' task.id %}">Edit</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No tasks assigned to this project.</p>
-    {% endif %}
-    
-    <a href="{% url 'task-create' project.id %}">Add task</a>
+                </ul>
+            </div>
 
-
-    <h2>Project Chat</h2>
-      {% for message in chat_messages %}
-              <strong>{{ message.user.username }}</strong>: {{ message.message }}
-              <span class="timestamp">{{ message.timestamp|date:'d M Y H:i' }}</span>
-      {% endfor %}
-        <form method="post">
-            {% csrf_token %}
-            <textarea name="chat_message" placeholder="Type your message here..." rows="3"></textarea>
-            <button type="submit">Send</button>
-        </form>
-
+            <div class="col-12">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" placeholder="Add a new message" name="chat_message" id="chat_message"></textarea>
+                        <label for="chat_message">Message</label>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

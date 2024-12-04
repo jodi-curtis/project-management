@@ -4,6 +4,8 @@ from .models import Project
 from  .forms import ProjectForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils import timezone
+from datetime import timedelta
 
 from tasks.models import Task
 from chat.models import ChatMessage
@@ -15,13 +17,45 @@ class ProjectListView(ListView):
     context_object_name = 'projects'
     ordering = ['end_date'] # Order projects by end date, showing those due to end soon first
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = timezone.now().date()
+
+        for project in context['projects']:
+            remaining_days = (project.end_date - today).days
+
+            if remaining_days == 0:
+                project.remaining_message = 'Due Today'
+                project.is_overdue = False
+            elif remaining_days < 0:
+                project.remaining_message = f'Due {-remaining_days} days ago'
+                project.is_overdue = True
+            else:
+                project.remaining_message = f'Due in {remaining_days} days'
+                project.is_overdue = False
+        
+        return context
+
 class ProjectDetailView(DetailView):
     model = Project
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tasks'] = self.object.tasks.all()
-        context['chat_messages'] = self.object.messages.order_by('timestamp')
+        chat_messages = self.object.messages.order_by('timestamp')
+
+        now = timezone.now()
+        for message in chat_messages:
+            message_date = message.timestamp.date()
+            message_time = message.timestamp.strftime('%H:%M')
+            if message_date == now.date():
+                message.display_timestamp = f"Today {message_time}"
+            elif message_date == (now - timedelta(days=1)).date():
+                message.display_timestamp = f"Yesterday {message_time}"
+            else:
+                message.display_timestamp = message.timestamp.strftime('%d %b %Y %H:%M')
+        
+        context['chat_messages'] = chat_messages
         return context
     
     def post(self, request, *args, **kwargs):
