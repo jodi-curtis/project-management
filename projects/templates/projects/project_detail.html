@@ -79,7 +79,12 @@
                                             {% else %}
                                                 (Unassigned)
                                             {% endif %}
-                                            | Due: {{ task.due_date }}
+                                            | 
+                                            {% if task.complete %}
+                                                Completed: {{ task.completed_date }}
+                                            {% else %}
+                                                Due: {{ task.due_date }}
+                                            {% endif %}
                                         </small>
                                     </span>
                                 </div>
