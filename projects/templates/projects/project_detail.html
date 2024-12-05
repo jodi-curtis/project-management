@@ -3,7 +3,28 @@
     <div class="container">
         <div class="row bg-dark text-light rounded my-5 py-4">
             <div class="col-12 col-md-9">
-                <h2>{{ project.name }}</h1>
+                <h2>
+                    {{ project.name }}
+                    {% if project.created_by == user %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ project.get_status_display }}
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="statusDropdown">
+                                    {% for key, value in status_choices %}
+                                        <li>
+                                            <button class="dropdown-item" type="submit" name="status" value="{{ key }}">
+                                                {{ value }}
+                                            </button>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </form>
+                    {% endif %}
+                </h2>
             </div>
 
             <div class="col-12 col-md-3 text-start text-md-end">
@@ -14,7 +35,7 @@
             </div>
 
             <div class="col-12 col-md-6">
-                <span class="badge rounded-pill bg-warning text-dark">Created by: {{ project.created_by.username }}</span>
+                <span class="badge rounded-pill bg-warning text-dark">Created by: {{ project.created_by.first_name }} {{ project.created_by.last_name }}</span>
             </div>
 
             <div class="col-12 col-md-6 text-start text-md-end">
@@ -30,7 +51,7 @@
                     <h5>Team Members:</h5>
                     <ul>
                         {% for member in project.team_members.all %}
-                            <li>{{ member.username }}</li>
+                            <li>{{ member.first_name }} {{ member.last_name }} <span class="text-muted">({{ member.profile.get_job_role_display  }})</span></li>
                         {% endfor %}
                     </ul>
                 {% endif %}
@@ -54,7 +75,7 @@
                                         <strong>{{ task.name }}</strong>
                                         <small>
                                             {% if task.assigned_to %}
-                                                ({{ task.assigned_to.username }})
+                                                ({{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }})
                                             {% else %}
                                                 (Unassigned)
                                             {% endif %}
@@ -95,7 +116,7 @@
                     {% if chat_messages.exists %}
                         {% for message in chat_messages %}
                             <li class="list-group-item">
-                                <strong class="text-primary">{{ message.user.username }}</strong>: 
+                                <strong class="text-primary">{{ message.user.first_name }} {{ message.user.last_name }}</strong>: 
                                 <span>{{ message.message }}</span>
                                 <small class="text-muted float-end">{{ message.display_timestamp }}</small>
                             </li>

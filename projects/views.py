@@ -56,6 +56,8 @@ class ProjectDetailView(DetailView):
                 message.display_timestamp = message.timestamp.strftime('%d %b %Y %H:%M')
         
         context['chat_messages'] = chat_messages
+        context['status_choices'] = Project.STATUS_CHOICES
+        context['current_status'] = self.object.status
         return context
     
     def post(self, request, *args, **kwargs):
@@ -76,6 +78,13 @@ class ProjectDetailView(DetailView):
                     message=message
                 )
             return redirect('project-detail', pk=project.pk)
+        
+        if 'status' in request.POST:
+            new_status = request.POST.get('status')
+            if new_status in dict(Project.STATUS_CHOICES):
+                project.status = new_status
+                project.save()
+                return redirect('project-detail', pk=project.pk)
                 
         return self.render_to_response(self.get_context_data())
 
