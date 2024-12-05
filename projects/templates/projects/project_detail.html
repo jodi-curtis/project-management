@@ -59,91 +59,95 @@
         </div>
 
 
-        <div class="row bg-light text-dark border border-secondary border-3 rounded my-5 py-4">
-            <div class="col-12 d-flex justify-content-between align-items-center mb-2">
-                <h2>Tasks</h2>
-                <a class="btn btn-primary rounded-circle" href="{% url 'task-create' project.id %}"><i class="fas fa-plus"></i></a>
-            </div>
+        {% if user in project.team_members.all %}
+            <div class="row bg-light text-dark border border-secondary border-3 rounded my-5 py-4">
+                <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                    <h2>Tasks</h2>
+                    <a class="btn btn-primary rounded-circle" href="{% url 'task-create' project.id %}"><i class="fas fa-plus"></i></a>
+                </div>
 
-            <div class="col-12">
-                {% if tasks %}
-                    <ul class="list-group">
-                        {% for task in tasks %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="{% if task.complete %}text-decoration-line-through text-muted{% endif %}">
-                                        <strong>{{ task.name }}</strong>
-                                        <small>
-                                            {% if task.assigned_to %}
-                                                ({{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }})
-                                            {% else %}
-                                                (Unassigned)
-                                            {% endif %}
-                                            | 
-                                            {% if task.complete %}
-                                                Completed: {{ task.completed_date }}
-                                            {% else %}
-                                                Due: {{ task.due_date }}
-                                            {% endif %}
-                                        </small>
-                                    </span>
-                                </div>
+                <div class="col-12">
+                    {% if tasks %}
+                        <ul class="list-group">
+                            {% for task in tasks %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="{% if task.complete %}text-decoration-line-through text-muted{% endif %}">
+                                            <strong>{{ task.name }}</strong>
+                                            <small>
+                                                {% if task.assigned_to %}
+                                                    ({{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }})
+                                                {% else %}
+                                                    (Unassigned)
+                                                {% endif %}
+                                                | 
+                                                {% if task.complete %}
+                                                    Completed: {{ task.completed_date }}
+                                                {% else %}
+                                                    Due: {{ task.due_date }}
+                                                {% endif %}
+                                            </small>
+                                        </span>
+                                    </div>
 
-                                <div class="d-flex align-items-center">
-                                    <form method="post" action="{% url 'project-detail' object.pk %}" class="me-2">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="task_id" value="{{ task.id }}">
-                                        <input 
-                                            type="checkbox" 
-                                            name="complete" 
-                                            {% if task.complete %} checked {% endif %}
-                                            onchange="this.form.submit();">
-                                    </form>
-                                    <a class="btn btn-sm btn-success" href="{% url 'task-edit' task.id %}">Edit</a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted">No tasks assigned to this project.</p>
-                {% endif %}
-            </div>
-        </div>
-
-
-        <div class="row bg-light text-dark border border-primary border-3 rounded my-5 py-4">
-            <div class="col-12 mb-3">
-                <h2 class="text-primary">Project Chat</h2>
-            </div>
-
-            <div class="col-12 mb-4">
-                <ul class="list-group">
-                    {% if chat_messages.exists %}
-                        {% for message in chat_messages %}
-                            <li class="list-group-item">
-                                <strong class="text-primary">{{ message.user.first_name }} {{ message.user.last_name }}</strong>: 
-                                <span>{{ message.message }}</span>
-                                <small class="text-muted float-end">{{ message.display_timestamp }}</small>
-                            </li>
-                        {% endfor %}
+                                    <div class="d-flex align-items-center">
+                                        <form method="post" action="{% url 'project-detail' object.pk %}" class="me-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                                            <input 
+                                                type="checkbox" 
+                                                name="complete" 
+                                                {% if task.complete %} checked {% endif %}
+                                                onchange="this.form.submit();">
+                                        </form>
+                                        <a class="btn btn-sm btn-success" href="{% url 'task-edit' task.id %}">Edit</a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     {% else %}
-                        <li class="list-group-item text-muted">No messages yet.</li>
+                        <p class="text-muted">No tasks assigned to this project.</p>
                     {% endif %}
-                </ul>
+                </div>
             </div>
 
-            <div class="col-12">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" placeholder="Add a new message" name="chat_message" id="chat_message"></textarea>
-                        <label for="chat_message">Message</label>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Send</button>
-                    </div>
-                </form>
+
+            <div class="row bg-light text-dark border border-primary border-3 rounded my-5 py-4">
+                <div class="col-12 mb-3">
+                    <h2 class="text-primary">Project Chat</h2>
+                </div>
+
+                <div class="col-12 mb-4">
+                    <ul class="list-group">
+                        {% if chat_messages.exists %}
+                            {% for message in chat_messages %}
+                                <li class="list-group-item">
+                                    <strong class="text-primary">{{ message.user.first_name }} {{ message.user.last_name }}</strong>: 
+                                    <span>{{ message.message }}</span>
+                                    <small class="text-muted float-end">{{ message.display_timestamp }}</small>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-muted">No messages yet.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="col-12">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" placeholder="Add a new message" name="chat_message" id="chat_message"></textarea>
+                            <label for="chat_message">Message</label>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+        {% else %}
+            <div class="alert alert-danger">You must be a member of this projects team to view its tasks and messages.</p>
+        {% endif %}
     </div>
 {% endblock content %}
