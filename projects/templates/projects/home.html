@@ -9,7 +9,14 @@
                     <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
                         <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
                             <div class="card-body">
-                                <h5 class="card-title">{{ project.name }}</h5>
+                                <h5 class="card-title">
+                                    {{ project.name }}
+                                    {% if project.created_by == user %}
+                                        <span class="badge rounded-circle bg-success text-light" title="Created by you">
+                                            <i class="fas fa-xs fa-star"></i>
+                                        </span>
+                                    {% endif %}
+                                </h5>
                                 <h6 class="card-subtitle mb-2 text-muted">
                                     {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
                                 </h6>
