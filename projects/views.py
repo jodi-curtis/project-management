@@ -1,11 +1,12 @@
 from typing import Any
 from django.shortcuts import render, redirect
-from .models import Project
-from  .forms import ProjectForm
+from .models import Project, TimeEntry
+from  .forms import ProjectForm, TimeEntryForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Sum
 
 from tasks.models import Task
 from chat.models import ChatMessage
@@ -43,6 +44,7 @@ class ProjectDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['tasks'] = self.object.tasks.all()
         chat_messages = self.object.messages.order_by('timestamp')
+        context['form'] = TimeEntryForm() 
 
         now = timezone.now()
         for message in chat_messages:
@@ -58,6 +60,9 @@ class ProjectDetailView(DetailView):
         context['chat_messages'] = chat_messages
         context['status_choices'] = Project.STATUS_CHOICES
         context['current_status'] = self.object.status
+        context['time_entries'] = TimeEntry.objects.filter(project=self.object)
+        total_time_by_user = (TimeEntry.objects.filter(project=self.object).values('user__username', 'user__first_name', 'user__last_name', 'user').annotate(total_time=Sum('time_spent_minutes')))
+        context['total_time_by_user'] = total_time_by_user
         return context
     
     def post(self, request, *args, **kwargs):
@@ -84,6 +89,15 @@ class ProjectDetailView(DetailView):
             if new_status in dict(Project.STATUS_CHOICES):
                 project.status = new_status
                 project.save()
+                return redirect('project-detail', pk=project.pk)
+            
+        if 'time_spent_minutes' in request.POST:
+            form = TimeEntryForm(request.POST)
+            if form.is_valid():
+                time_entry = form.save(commit=False)
+                time_entry.user = request.user
+                time_entry.project = project
+                time_entry.save()
                 return redirect('project-detail', pk=project.pk)
                 
         return self.render_to_response(self.get_context_data())

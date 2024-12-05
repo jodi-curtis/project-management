@@ -26,3 +26,11 @@ class Project(models.Model):
     
     def get_absolute_url(self):
         return reverse('project-detail', kwargs={'pk': self.pk})
+    
+class TimeEntry(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="time_entries")
+    time_spent_minutes = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Time Entry by {self.user.username} for {self.project.name}"
