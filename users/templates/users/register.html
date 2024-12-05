@@ -1,12 +1,23 @@
 {% extends "projects/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="content-section">
-        {% crispy form %}
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                Already hava an account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
-            </small>
+    <div class="container py-5 d-flex justify-content-center">
+        <div class="content-section bg-light text-dark rounded-3 border border-2 p-5 shadow-lg" style="width: 450px;">
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4 text-center text-info">Register</legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group text-center mt-4">
+                    <button class="btn btn-info btn-lg w-100" type="submit">Register</button>
+                </div>
+            </form>
+            <div class="border-top pt-3 text-center mt-4">
+                <small class="text-muted">
+                    Already hava an account? <a class="text-info" href="{% url 'login' %}">Sign In</a>
+                </small>
+            </div>
         </div>
    </div>
 {% endblock content %}

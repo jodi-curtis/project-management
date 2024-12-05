@@ -11,7 +11,7 @@ from tasks.models import Task
 from chat.models import ChatMessage
 
 
-class ProjectListView(ListView):
+class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
     template_name = 'projects/home.html'
     context_object_name = 'projects'
