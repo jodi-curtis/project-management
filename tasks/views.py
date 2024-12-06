@@ -14,8 +14,14 @@ class TaskListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['completed_tasks'] = Task.objects.filter(complete=True).order_by('due_date')
-        context['incomplete_tasks'] = Task.objects.filter(complete=False).order_by('due_date')
+        completed_tasks = Task.objects.filter(complete=True).order_by('due_date')
+        incomplete_tasks = Task.objects.filter(complete=False).order_by('due_date')
+
+        for task in incomplete_tasks:
+            task.is_overdue = task.is_overdue()
+
+        context['completed_tasks'] = completed_tasks
+        context['incomplete_tasks'] = incomplete_tasks
         return context
 
     def post(self, request, *args, **kwargs):

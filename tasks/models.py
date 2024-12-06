@@ -22,3 +22,6 @@ class Task(models.Model):
             self.completed_date = None
             
         super().save(*args, **kwargs)
+
+    def is_overdue(self):
+        return not self.complete and self.due_date < date.today()
