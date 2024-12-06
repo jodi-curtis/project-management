@@ -17,7 +17,6 @@ class Project(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(default= date.today() + timedelta(1))
-    completion_date = models.DateField(null=True)
     team_members = models.ManyToManyField(User, related_name='projects')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Not Started')
         
