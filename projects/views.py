@@ -7,14 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
-
+from django.db import models
 from tasks.models import Task
 from chat.models import ChatMessage
 
 
 class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
-    template_name = 'projects/home.html'
     context_object_name = 'projects'
     ordering = ['end_date'] # Order projects by end date, showing those due to end soon first
 
@@ -78,6 +77,17 @@ class ProjectDetailView(DetailView):
         context['current_status'] = self.object.status
         context['time_entries'] = TimeEntry.objects.filter(project=self.object)
         total_time_by_user = (TimeEntry.objects.filter(project=self.object).values('user__username', 'user__first_name', 'user__last_name', 'user').annotate(total_time=Sum('time_spent_minutes')))
+        
+        for entry in total_time_by_user:
+            total_minutes = entry['total_time']
+            
+            if total_minutes >= 60:
+                hours = total_minutes // 60
+                minutes = total_minutes % 60
+                entry['total_time'] = f"{hours} hours {minutes} minutes"
+            else:
+                entry['total_time'] = f"{total_minutes} minutes"
+
         context['total_time_by_user'] = total_time_by_user
         return context
     
@@ -162,7 +172,62 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Create your views here.
 def home(request):
+    not_started_projects = []
+    in_progress_projects = []
+    completed_projects = []
+
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+
+    time_entries = TimeEntry.objects.filter(user=request.user, date_entry__gte=start_of_week)
+
+    total_time_minutes = time_entries.aggregate(total_time=models.Sum('time_spent_minutes'))['total_time'] or 0
+
+    if total_time_minutes >= 60:
+        hours = total_time_minutes // 60
+        minutes = total_time_minutes % 60
+        total_time_message = f"{hours} hours {minutes} minutes"
+    else:
+        total_time_message = f"{total_time_minutes} minutes"
+
+    projects = Project.objects.filter(team_members=request.user)
+
+    total_tasks = Task.objects.filter(assigned_to = request.user).count()
+    completed_tasks = Task.objects.filter(assigned_to = request.user, complete=True).count()
+    if total_tasks > 0:
+        completed_percentage = (completed_tasks / total_tasks) * 100
+    else:
+        completed_percentage = 0
+
+    for project in projects:
+        if project.status == 'Not Started':
+            not_started_projects.append(project)
+        elif project.status == 'In Progress':
+            in_progress_projects.append(project)
+        else:
+            completed_projects.append(project)
+
+        # Calculate remaining days
+        remaining_days = (project.end_date - today).days
+
+        if remaining_days == 0:
+            project.remaining_message = 'Due Today'
+            project.is_overdue = False
+        elif remaining_days < 0:
+            project.remaining_message = f'Due {-remaining_days} days ago'
+            project.is_overdue = True
+        else:
+            project.remaining_message = f'Due in {remaining_days} days'
+            project.is_overdue = False
+
     context = {
-        'projects' : Project.objects.all()
+        'projects': projects,
+        'not_started_projects': not_started_projects,
+        'in_progress_projects': in_progress_projects,
+        'completed_projects': completed_projects,
+        'total_tasks': total_tasks,
+        'completed_tasks': completed_tasks,
+        'completed_percentage': round(completed_percentage, 2),
+        'total_time_message': total_time_message
     }
     return render(request, 'projects/home.html', context)

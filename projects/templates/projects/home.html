@@ -1,114 +1,159 @@
 {% extends "projects/base.html" %}
 {% block content %}
     <div class="container">
-        <h2 class="my-4">Project Home Page</h2>
+        <h2 class="display-4 mt-5">Welcome Back, {{ request.user.first_name }}!</h2>
+        <p class="lead mb-5">
+            Welcome back to the project management app! View your dashboard below to get a glimpse and your projects and progress..
+        </p>
 
-        <ul class="nav nav-tabs" id="projectsTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="not-started-tab" data-bs-toggle="tab" data-bs-target="#notstarted" type="button" role="tab" aria-controls="notstarted" aria-selected="true">Not Started</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#inprogress" type="button" role="tab" aria-controls="inprogress" aria-selected="false">In Progress</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">Completed</button>
-            </li>
-        </ul>
+        <div class="row mb-5">
+            <div class="col-md-8 d-flex justify-content-center">
+                <div class="p-4 w-100 bg-light border rounded shadow">
+                    <h4><i class="fas fa-check-circle"></i> Tasks Completed</h4>
+                    <p><strong>{{ completed_tasks }}</strong> out of <strong>{{ total_tasks }}</strong> tasks completed</p>
+                    <div class="progress">
+                        {% if total_tasks > 0 %}
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ completed_percentage }}%" aria-valuenow="{{ completed_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        {% else %}
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        {% endif %}
+                    </div>                    
+                </div>
+            </div>
+    
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="p-4 w-100 bg-light border rounded shadow">
+                    <h4><i class="fas fa-clock"></i> Time Tracked</h4>
+                    <p>You have tracked <strong>{{ total_time_message }}</strong> this week </p>
+                </div>
+            </div>
+        </div>
 
-        <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="notstarted" role="tabpanel" aria-labelledby="notstarted-tab">
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    {% for project in not_started_projects %}
-                        <div class="col">
-                            <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
-                                <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            {{ project.name }}
-                                            {% if project.created_by == user %}
-                                                <span class="badge rounded-circle bg-success text-light" title="Created by you">
-                                                    <i class="fas fa-xs fa-star"></i>
-                                                </span>
-                                            {% endif %}
-                                        </h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
-                                        </h6>
-                                        <p class="card-text">{{ project.description }}</p>
-                                    </div>
-                                    <div class="card-footer text-center">
-                                        {% if project.remaining_message %}
-                                            <small class="{% if project.is_overdue %}text-danger{% else %}text-muted{% endif %}">{{ project.remaining_message }}</small>
-                                        {% endif %}
-                                    </div>
+        <div class="row mb-4">
+            <div class="p-4 w-100 bg-dark text-light border rounded shadow">
+
+            <h3 class="mb-4">My Projects</h3>
+            <ul class="nav nav-tabs" id="projectsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="not-started-tab" data-bs-toggle="tab" data-bs-target="#notstarted" type="button" role="tab" aria-controls="notstarted" aria-selected="true">Not Started</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#inprogress" type="button" role="tab" aria-controls="inprogress" aria-selected="false">In Progress</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">Completed</button>
+                </li>
+            </ul>
+
+            <div class="tab-content p-3 bg-white border rounded" id="myTabContent" style="max-height: 500px; overflow-y: auto; overflow-x: hidden;">
+                <div class="tab-pane fade show active" id="notstarted" role="tabpanel" aria-labelledby="notstarted-tab">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        {% if not_started_projects %}
+                            {% for project in not_started_projects %}
+                                <div class="col">
+                                    <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
+                                        <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {{ project.name }}
+                                                    {% if project.created_by == user %}
+                                                        <span class="badge rounded-circle bg-success text-light" title="Created by you">
+                                                            <i class="fas fa-xs fa-star"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                </h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">
+                                                    {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
+                                                </h6>
+                                                <p class="card-text">{{ project.description }}</p>
+                                            </div>
+                                            <div class="card-footer text-center">
+                                                {% if project.remaining_message %}
+                                                    <small class="{% if project.is_overdue %}text-danger{% else %}text-muted{% endif %}">{{ project.remaining_message }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
-                        </div>
-                    {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted py-4">No projects found..</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="inprogress" role="tabpanel" aria-labelledby="inprogress-tab">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        {% if in_progress_projects %}
+                            {% for project in in_progress_projects %}
+                                <div class="col">
+                                    <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
+                                        <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {{ project.name }}
+                                                    {% if project.created_by == user %}
+                                                        <span class="badge rounded-circle bg-success text-light" title="Created by you">
+                                                            <i class="fas fa-xs fa-star"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                </h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">
+                                                    {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
+                                                </h6>
+                                                <p class="card-text">{{ project.description }}</p>
+                                            </div>
+                                            <div class="card-footer text-center">
+                                                {% if project.remaining_message %}
+                                                    <small class="{% if project.is_overdue %}text-danger{% else %}text-muted{% endif %}">{{ project.remaining_message }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted py-4">No projects found..</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        {% if completed_projects %}
+                            {% for project in completed_projects %}
+                                <div class="col">
+                                    <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
+                                        <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {{ project.name }}
+                                                    {% if project.created_by == user %}
+                                                        <span class="badge rounded-circle bg-success text-light" title="Created by you">
+                                                            <i class="fas fa-xs fa-star"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                </h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">
+                                                    {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
+                                                </h6>
+                                                <p class="card-text">{{ project.description }}</p>
+                                            </div>
+                                            <div class="card-footer text-center">
+                                                {% if project.remaining_message %}
+                                                    <small class="{% if project.is_overdue %}text-danger{% else %}text-muted{% endif %}">{{ project.remaining_message }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted py-4">No projects found..</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="inprogress" role="tabpanel" aria-labelledby="inprogress-tab">
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    {% for project in in_progress_projects %}
-                        <div class="col">
-                            <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
-                                <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            {{ project.name }}
-                                            {% if project.created_by == user %}
-                                                <span class="badge rounded-circle bg-success text-light" title="Created by you">
-                                                    <i class="fas fa-xs fa-star"></i>
-                                                </span>
-                                            {% endif %}
-                                        </h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
-                                        </h6>
-                                        <p class="card-text">{{ project.description }}</p>
-                                    </div>
-                                    <div class="card-footer text-center">
-                                        {% if project.remaining_message %}
-                                            <small class="{% if project.is_overdue %}text-danger{% else %}text-muted{% endif %}">{{ project.remaining_message }}</small>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
             </div>
-            <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    {% for project in completed_projects %}
-                        <div class="col">
-                            <a href="{% url 'project-detail' project.id %}" class="text-decoration-none text-dark">
-                                <div class="card {% if project.is_overdue %}border-danger{% endif %} h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            {{ project.name }}
-                                            {% if project.created_by == user %}
-                                                <span class="badge rounded-circle bg-success text-light" title="Created by you">
-                                                    <i class="fas fa-xs fa-star"></i>
-                                                </span>
-                                            {% endif %}
-                                        </h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {{ project.start_date|date:'dS M Y' }} - {{ project.end_date|date:'dS M Y' }}
-                                        </h6>
-                                        <p class="card-text">{{ project.description }}</p>
-                                    </div>
-                                    <div class="card-footer text-center">
-                                        {% if project.remaining_message %}
-                                            <small class="{% if project.is_overdue %}text-danger{% else %}text-muted{% endif %}">{{ project.remaining_message }}</small>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-          </div>
+        </div>
+
     </div>
 {% endblock content %}

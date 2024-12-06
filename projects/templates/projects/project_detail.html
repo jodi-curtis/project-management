@@ -140,7 +140,7 @@
                                     {% for entry in total_time_by_user %}
                                         <tr>
                                             <td>{{ entry.user__first_name }} {{ entry.user__last_name }}</td>
-                                            <td>{{ entry.total_time }} minutes</td>
+                                            <td>{{ entry.total_time }}</td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}
