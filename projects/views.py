@@ -49,6 +49,12 @@ class ProjectListView(LoginRequiredMixin, ListView):
         context['not_started_projects'] = not_started_projects
         context['in_progress_projects'] = in_progress_projects
         context['completed_projects'] = completed_projects
+
+        context['not_started_count'] = len(not_started_projects)
+        context['in_progress_count'] = len(in_progress_projects)
+        context['completed_count'] = len(completed_projects)
+
+
         
         return context
 
@@ -228,6 +234,9 @@ def home(request):
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'completed_percentage': round(completed_percentage, 2),
-        'total_time_message': total_time_message
+        'total_time_message': total_time_message,
+        'not_started_count' : len(not_started_projects),
+        'in_progress_count' : len(in_progress_projects),
+        'completed_count' : len(completed_projects),
     }
     return render(request, 'projects/home.html', context)

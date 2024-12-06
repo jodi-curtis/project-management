@@ -5,13 +5,13 @@
 
         <ul class="nav nav-tabs" id="projectsTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="not-started-tab" data-bs-toggle="tab" data-bs-target="#notstarted" type="button" role="tab" aria-controls="notstarted" aria-selected="true">Not Started</button>
+                <button class="nav-link active" id="not-started-tab" data-bs-toggle="tab" data-bs-target="#notstarted" type="button" role="tab" aria-controls="notstarted" aria-selected="true">Not Started <span class="badge rounded-pill bg-danger">{{ not_started_count }}</span></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#inprogress" type="button" role="tab" aria-controls="inprogress" aria-selected="false">In Progress</button>
+                <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#inprogress" type="button" role="tab" aria-controls="inprogress" aria-selected="false">In Progress <span class="badge rounded-pill bg-danger">{{ in_progress_count }}</span></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">Completed</button>
+                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">Completed <span class="badge rounded-pill bg-danger">{{ completed_count }}</span></button>
             </li>
         </ul>
 
