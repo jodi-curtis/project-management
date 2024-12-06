@@ -22,7 +22,19 @@ class ProjectListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         today = timezone.now().date()
 
+        not_started_projects = []
+        in_progress_projects = []
+        completed_projects = []
+
         for project in context['projects']:
+            if project.status == 'Not Started':
+                not_started_projects.append(project)
+            elif project.status == 'In Progress':
+                in_progress_projects.append(project)
+            else:
+                completed_projects.append(project)
+
+
             remaining_days = (project.end_date - today).days
 
             if remaining_days == 0:
@@ -34,6 +46,10 @@ class ProjectListView(LoginRequiredMixin, ListView):
             else:
                 project.remaining_message = f'Due in {remaining_days} days'
                 project.is_overdue = False
+
+        context['not_started_projects'] = not_started_projects
+        context['in_progress_projects'] = in_progress_projects
+        context['completed_projects'] = completed_projects
         
         return context
 
