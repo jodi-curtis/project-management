@@ -84,9 +84,9 @@
                                                 {% endif %}
                                                 | 
                                                 {% if task.complete %}
-                                                    Completed: {{ task.completed_date }}
+                                                    Completed: {{ task.completed_date|date:'dS M Y' }}
                                                 {% else %}
-                                                    Due: <span class="{% if task.is_overdue %}text-danger{% endif %}">{{ task.due_date }}</span>
+                                                    Due: <span class="{% if task.is_overdue %}text-danger{% endif %}">{{ task.due_date|date:'dS M Y' }}</span>
                                                 {% endif %}
                                             </small>
                                         </span>

@@ -240,3 +240,41 @@ def home(request):
         'completed_count' : len(completed_projects),
     }
     return render(request, 'projects/home.html', context)
+
+def time_tracked(request):
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+
+    time_entries = TimeEntry.objects.filter(user=request.user, date_entry__gte=start_of_week)
+
+    time_by_day = {}
+    
+    for entry in time_entries:
+        date_str = entry.date_entry.strftime('%Y-%m-%d')
+        if date_str not in time_by_day:
+            time_by_day[date_str] = 0
+        time_by_day[date_str] += entry.time_spent_minutes
+
+    days_of_week = []
+    for i in range(7):
+        date = start_of_week + timedelta(days=i)
+        date_str = date.strftime('%Y-%m-%d')
+        minutes_spent = time_by_day.get(date_str, 0)
+        if minutes_spent >= 60:
+            hours = minutes_spent // 60
+            minutes = minutes_spent % 60
+            days_of_week.append({
+                'date': date,
+                'time_spent': f"{hours} hours {minutes} minutes"
+            })
+        else:
+            days_of_week.append({
+                'date': date,
+                'time_spent': f"{minutes_spent} minutes"
+            })
+
+    context = {
+        'days_of_week': days_of_week,
+    }
+
+    return render(request, 'projects/time_tracked.html', context)

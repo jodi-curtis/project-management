@@ -8,24 +8,28 @@
 
         <div class="row mb-5">
             <div class="col-md-8 d-flex justify-content-center">
-                <div class="p-4 w-100 bg-light border rounded shadow">
-                    <h4><i class="fas fa-check-circle"></i> Tasks Completed</h4>
-                    <p><strong>{{ completed_tasks }}</strong> out of <strong>{{ total_tasks }}</strong> tasks completed</p>
-                    <div class="progress">
-                        {% if total_tasks > 0 %}
-                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ completed_percentage }}%" aria-valuenow="{{ completed_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                        {% else %}
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        {% endif %}
-                    </div>                    
-                </div>
+                <a href="{% url 'task-home' %}" class="w-100 text-decoration-none text-dark">
+                    <div class="p-4 w-100 bg-light border rounded shadow d-flex flex-column h-100">
+                        <h4><i class="fas fa-check-circle"></i> Tasks Completed</h4>
+                        <p><strong>{{ completed_tasks }}</strong> out of <strong>{{ total_tasks }}</strong> tasks completed</p>
+                        <div class="progress">
+                            {% if total_tasks > 0 %}
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ completed_percentage }}%" aria-valuenow="{{ completed_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% else %}
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% endif %}
+                        </div>                    
+                    </div>
+                </a>
             </div>
     
             <div class="col-md-4 d-flex justify-content-center">
-                <div class="p-4 w-100 bg-light border rounded shadow">
-                    <h4><i class="fas fa-clock"></i> Time Tracked</h4>
-                    <p>You have tracked <strong>{{ total_time_message }}</strong> this week </p>
-                </div>
+                <a href="{% url 'time-tracked' %}" class="w-100 text-decoration-none text-dark">
+                    <div class="p-4 w-100 bg-light border rounded shadow d-flex flex-column h-100">
+                        <h4><i class="fas fa-clock"></i> Time Tracked</h4>
+                        <p>You have tracked <strong>{{ total_time_message }}</strong> this week </p>
+                    </div>
+                </a>
             </div>
         </div>
 
