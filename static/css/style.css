@@ -23,3 +23,19 @@ footer{
     color: #46218f;
     background-color: #bcb9c2;
 }
+
+#login-content{
+    width: 450px;
+}
+
+#profile-image{
+    width: 250px; 
+    height: 250px; 
+    object-fit: cover;
+}
+
+#myHomeTabContent{
+    max-height: 500px; 
+    overflow-y: auto; 
+    overflow-x: hidden;
+}

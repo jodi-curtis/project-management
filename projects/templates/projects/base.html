@@ -30,7 +30,7 @@
                             <span class="navbar-text mx-2 fs-5">Hello, {{ user.first_name }}!</span>
 
                             <li class="nav-item mx-3">
-                                <a class="nav-link fs-5 {% if request.resolver_match.url_name == 'project-home' %}active{% endif %}" href="{% url 'project-home' %}">Home</a>
+                                <a class="nav-link fs-5 {% if request.resolver_match.url_name == 'project-home' %}active{% endif %}" href="{% url 'project-home' %}"><i class="fa-solid fa-house"></i></a>
                             </li>
 
                             <li class="nav-item dropdown">
@@ -53,7 +53,7 @@
                             </li>
 
                             <li class="nav-item mx-3">
-                                <a class="nav-link fs-5 {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}">Profile</a>
+                                <a class="nav-link fs-5 {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i></a>
                             </li>
 
                             <form method="POST" action="{% url 'logout' %}" class="form-inline nav-item d-flex align-items-center">
