@@ -1,13 +1,16 @@
 {% extends "projects/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+    <!--Profile page-->
     <div class="container py-5">
         <div class="content-section bg-light text-dark rounded-3 border border-2 p-4 shadow">
             <div class="row">
+                <!--Profile image-->
                 <div class="col-12 col-md-4 d-flex justify-content-center align-items-center">
                     <img class="rounded-circle border border-primary border-3" src="{{ user.profile.image.url }}" alt="{{user.username}} profile image" id="profile-image">
                 </div>
                 <div class="col-12 col-md-8">
+                    <!-- Form to update user and profile data-->
                     <form method="POST" enctype="multipart/form-data" class="my-4">
                         {% csrf_token %}
                         <fieldset class="form-group mb-4">

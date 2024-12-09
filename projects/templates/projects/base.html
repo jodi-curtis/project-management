@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {% load static %}
     {% if title %}
@@ -10,22 +11,30 @@
     {% else %}
         <title>Django Project Management</title>
     {% endif %}
+    <!--Link to stylesheet-->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!--Favicon-->
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <!--Font Awesome Icons-->
     <script src="https://kit.fontawesome.com/fc6f6498bf.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="col-md-12">
+        <!--Menu-->
         <nav class="navbar navbar-expand-lg navbar-dark" id="menu">
             <div class="container-fluid">
+                <!--Logo and link to home page-->
                 <a class="navbar-brand" href="{% url 'project-home' %}">
                     <img src="{% static 'images/logo.png' %}" alt="Logo" id="logo">
                 </a>
+                <!--Navbar toggle button for smaller screens-->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <!--Navbar options-->
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                     <ul class="navbar-nav">
+                        <!--If user is logged in show below options-->
                         {% if user.is_authenticated %}
                             <span class="navbar-text mx-2 fs-5">Hello, {{ user.first_name }}!</span>
 
@@ -62,6 +71,7 @@
                                     Logout
                                 </button>
                             </form>
+                        <!--If user not logged in show login and register as options-->
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'login' %}">Login</a>
@@ -73,27 +83,29 @@
                     </ul>
                 </div>
             </div>
-          </nav>
+        </nav>
 
-
-
+        <!-- Container for alets-->
         <div class="container pt-4">
             {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
 
+        <!--Main Content-->
         {% block content %}{% endblock %}
 
+        <!--Footer-->
         <footer class="py-3 mt-5">
             <strong>&copy; Project Manager</strong>
         </footer>
     </div>
 
+    <!--Bootstrap Javascript-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>

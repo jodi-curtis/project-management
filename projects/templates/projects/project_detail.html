@@ -1,8 +1,8 @@
 {% extends "projects/base.html" %}
 {% load crispy_forms_tags %}
-
 {% block content %}
     <div class="container">
+        <!--Project details section-->
         <div class="row bg-dark text-light rounded my-5 py-4">
             <div class="col-12 col-md-9">
                 <h2>
@@ -61,7 +61,9 @@
         </div>
 
 
+        <!--Only show tasks, time log and chat to team members for project-->
         {% if user in project.team_members.all %}
+            <!--Tasks section-->
             <div class="row bg-light text-dark border border-secondary border-3 rounded my-5 py-4">
                 <div class="col-12 d-flex justify-content-between align-items-center mb-2">
                     <h3>Tasks</h3>
@@ -71,6 +73,7 @@
                 <div class="col-12">
                     {% if tasks %}
                         <ul class="list-group">
+                            <!--List all tasks for this project-->
                             {% for task in tasks %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
@@ -93,6 +96,7 @@
                                     </div>
 
                                     <div class="d-flex align-items-center">
+                                        <!--Form to mark task as complete-->
                                         <form method="post" action="{% url 'project-detail' object.pk %}" class="me-2">
                                             {% csrf_token %}
                                             <input type="hidden" name="task_id" value="{{ task.id }}">
@@ -112,9 +116,12 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!--Time tracker section-->
             <div class="row bg-light text-dark border border-secondary border-3 rounded my-5 py-4">
                 <div class="col-12 mb-5">
                     <h3 class="mb-4"><i class="fas fa-clock"></i> Log Time</h3>
+                    <!--Form to allow user to track their time on this project-->
                     <form method="POST" class="card p-4 shadow-sm">
                         {% csrf_token %}
                         <input type="hidden" name="project" value="{{ project.id }}">
@@ -125,6 +132,7 @@
                     </form>
                 </div>
             
+                <!--Table displaying time each team member has tracked on this project-->
                 <div class="col-12">
                     <h5 class="mb-3"><i class="fas fa-history"></i> Time Entries</h5>
                     <div class="table">
@@ -156,6 +164,7 @@
             
 
 
+            <!--Project Chat section-->
             <div class="row bg-light text-dark border border-primary border-3 rounded my-5 py-4">
                 <div class="col-12 mb-3">
                     <h2 class="text-primary">Project Chat</h2>
@@ -164,6 +173,7 @@
                 <div class="col-12 mb-4">
                     <ul class="list-group">
                         {% if chat_messages.exists %}
+                            <!--Display each message-->
                             {% for message in chat_messages %}
                                 <li class="list-group-item">
                                     <strong class="text-primary">{{ message.user.first_name }} {{ message.user.last_name }}</strong>: 
@@ -178,6 +188,7 @@
                 </div>
 
                 <div class="col-12">
+                    <!--Form to post new message-->
                     <form method="post">
                         {% csrf_token %}
                         <div class="form-floating mb-3">

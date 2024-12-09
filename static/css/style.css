@@ -1,12 +1,7 @@
+/*Menu*/
 #menu{
     background-color: #9F8BC7;
     color: #ffffff;
-}
-
-footer{
-    background-color: #9F8BC7;
-    color: #ffffff;
-    text-align: center;
 }
 
 #logo{
@@ -17,23 +12,32 @@ footer{
     font-weight: bold;
 }
 
-
 .dropdown-menu .dropdown-item.active,
 .dropdown-menu .dropdown-item:hover {
     color: #46218f;
     background-color: #bcb9c2;
 }
 
+/*Footer*/
+footer{
+    background-color: #9F8BC7;
+    color: #ffffff;
+    text-align: center;
+}
+
+/*Login page*/
 #login-content{
     width: 450px;
 }
 
+/*Profile page*/
 #profile-image{
     width: 250px; 
     height: 250px; 
     object-fit: cover;
 }
 
+/*Home page*/
 #myHomeTabContent{
     max-height: 500px; 
     overflow-y: auto; 
