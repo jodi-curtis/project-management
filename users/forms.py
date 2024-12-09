@@ -52,7 +52,9 @@ ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
 
 class FileUploadForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(
+        label='Choose profile image',
+    )
 
     def clean_file(self):
         uploaded_file = self.cleaned_data['file']
