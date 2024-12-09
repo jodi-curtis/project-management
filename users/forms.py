@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
-
+from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -45,4 +45,22 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['image', 'job_role']
+        fields = ['job_role']
+
+
+ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif']
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+
+class FileUploadForm(forms.Form):
+    file = forms.FileField()
+
+    def clean_file(self):
+        uploaded_file = self.cleaned_data['file']
+
+        if uploaded_file.content_type not in ALLOWED_IMAGE_TYPES:
+            raise ValidationError('Invalid file type. Only image files are allowed.')
+
+        if uploaded_file.size > MAX_FILE_SIZE:
+            raise ValidationError(f'File size exceeds {MAX_FILE_SIZE // (1024 * 1024)} MB.')
+
+        return uploaded_file

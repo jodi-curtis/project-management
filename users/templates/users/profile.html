@@ -7,7 +7,7 @@
             <div class="row">
                 <!--Profile image-->
                 <div class="col-12 col-md-4 d-flex justify-content-center align-items-center">
-                    <img class="rounded-circle border border-primary border-3" src="{{ user.profile.image.url }}" alt="{{user.username}} profile image" id="profile-image">
+                    <img class="rounded-circle border border-primary border-3" src="/file/" alt="{{user.username}} profile image" id="profile-image">
                 </div>
                 <div class="col-12 col-md-8">
                     <!-- Form to update user and profile data-->
@@ -17,6 +17,7 @@
                             <legend class="border-bottom pb-2 mb-3 text-primary">Profile Information</legend>
                             {{ u_form|crispy }}
                             {{ p_form|crispy }}
+                            {{ form.as_p }}
                         </fieldset>
                         <div class="text-end">
                             <button class="btn btn-primary px-4 py-2" type="submit">Update</button>
