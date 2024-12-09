@@ -62,7 +62,7 @@
 
 
         <!--Only show tasks, time log and chat to team members for project-->
-        {% if user in project.team_members.all %}
+        {% if user in project.team_members.all or project.created_by == user %}
             <!--Tasks section-->
             <div class="row bg-light text-dark border border-secondary border-3 rounded my-5 py-4">
                 <div class="col-12 d-flex justify-content-between align-items-center mb-2">
