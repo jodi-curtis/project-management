@@ -16,9 +16,9 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #get tasks where complete is true and order by due date
-        completed_tasks = Task.objects.filter(complete=True).order_by('due_date')
+        completed_tasks = Task.objects.filter(complete=True, assigned_to=self.request.user).order_by('due_date')
         #get tasks where complete is false and order by due date
-        incomplete_tasks = Task.objects.filter(complete=False).order_by('due_date')
+        incomplete_tasks = Task.objects.filter(complete=False, assigned_to=self.request.user).order_by('due_date')
 
         #For each incomplete task, checck if overdue
         for task in incomplete_tasks:
